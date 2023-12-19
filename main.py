@@ -33,19 +33,30 @@ service = Service()
 driver = Chrome(service=service, options=options)
 print('> Running browser...\n')
     
-try:    
+try:
     url = 'https://90ball.letsplaybingo.io/'
     driver.get(url)
 
     wait = Wait(driver, 5)
+    browser = ActionChains(driver)
+    
+    # Hide menu elements
+    menu = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'menu')))
+    submenu = menu.find_elements(By.TAG_NAME, 'li')
+    google_translate = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'col.shrink.text-right.margin-left-lg')))
+    info = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'col.grow.min-size-350.padding-vertical-xxlg.padding-horizontal-xxlg.white-text')))
+    footer = wait.until(EC.presence_of_element_located((By.TAG_NAME, 'footer')))
+    submenu.extend((google_translate, info, footer))
+    for element in submenu:
+        driver.execute_script('arguments[0].style.display = "none";', element)
 
     wild_bingo = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[2]/section/div[1]/div[2]/div[2]/div[1]/label')))
 
     autoplay_speed = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[2]/section/div[2]/div[1]/div[2]/div/div[2]/div/div[4]')))
     
-    # Slider
-    driver.execute_script('document.getElementsByClassName("rc-slider-track")[0].style = "width: 100%"')
-    driver.execute_script('document.getElementsByClassName("rc-slider-handle")[0].style = "right: 100%"')
+    
+    slider = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[2]/section/div[2]/div[1]/div[2]/div/div[2]/div')))
+    browser.click_and_hold(slider).move_by_offset(-100, 0).release().perform()
 
     audible_caller = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[2]/section/div[2]/div[2]/div[2]/div[1]/div[1]/label')))
     check_element(audible_caller)
@@ -59,22 +70,23 @@ try:
         
     caller_selection = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[2]/section/div[2]/div[3]/div[2]/div/div/div[1]/div[1]')))
     caller_selection.click()
-    ActionChains(driver).send_keys('Microsoft Helena').perform()
-    ActionChains(driver).send_keys(Keys.ENTER).perform()
+    browser.send_keys('Microsoft Helena').perform()
+    browser.send_keys(Keys.ENTER).perform()
     
     audible_chime = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[2]/section/div[2]/div[4]/div[2]/label')))
     check_element(audible_chime)
     
     chime_selection = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[2]/section/div[2]/div[5]/div[2]/div/div')))
     chime_selection.click()
-    ActionChains(driver).send_keys('Chime 2').perform()
-    ActionChains(driver).send_keys(Keys.ENTER).perform()
+    browser.send_keys('Chime 2').perform()
+    browser.send_keys(Keys.ENTER).perform()
 
     start_autoplay = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[1]/section/div/button[2]')))
     time.sleep(30)
     start_autoplay.click()
     
     input('> Press any key to finish...\n')
+    raise(KeyboardInterrupt)
 
 except (KeyboardInterrupt, ConnectionRefusedError, MaxRetryError, NewConnectionError):
     driver.close()
