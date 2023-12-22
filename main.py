@@ -44,9 +44,8 @@ try:
     menu = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'menu')))
     submenu = menu.find_elements(By.TAG_NAME, 'li')
     google_translate = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'col.shrink.text-right.margin-left-lg')))
-    info = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'col.grow.min-size-350.padding-vertical-xxlg.padding-horizontal-xxlg.white-text')))
     footer = wait.until(EC.presence_of_element_located((By.TAG_NAME, 'footer')))
-    submenu.extend((google_translate, info, footer))
+    submenu.extend((google_translate, footer))
     for element in submenu:
         driver.execute_script('arguments[0].style.display = "none";', element)
 
@@ -80,6 +79,18 @@ try:
     chime_selection.click()
     browser.send_keys('Chime 2').perform()
     browser.send_keys(Keys.ENTER).perform()
+    
+    info = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[3]')))
+    driver.execute_script('arguments[0].style.display = "none";', info)
+    
+    config = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[2]')))
+    driver.execute_script('arguments[0].style.display = "none";', config)
+    
+    header = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/header')))
+    driver.execute_script('arguments[0].style.background = "white";', header)
+    
+    body = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body')))
+    driver.execute_script('arguments[0].style.background = "rgb(34,34,34)";', body)
 
     start_autoplay = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section[2]/div/div[1]/section/div/button[2]')))
     time.sleep(30)
